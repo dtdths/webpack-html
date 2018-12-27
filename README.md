@@ -1,5 +1,5 @@
-##  一.前言
-webpack配置较为繁杂，大部分教程开篇就从基本术语开始讲起，容易让人望而生畏。so，我已实用为目的写了这篇文章。
+##  一.前言
+webpack配置较为繁杂，大部分教程开篇就从基本术语开始讲起，容易让人望而生畏。so，我已实用为目的写了这篇文章。
 
 ##  二.目标
  >* <input type="checkbox" checked disabled>支持热替换
@@ -19,7 +19,7 @@ npm init -y
 ``` bash
 npm install --save-dev webpack webpack-cli cross-env
 ```
-其中 cross-env 主要是用于比较方便的跨平台设置 process.env.NODE_ENV ,用于区分开发环境和生产环境。
+其中 cross-env 主要是用于比较方便的跨平台设置 process.env.NODE_ENV ,用于区分开发环境和生产环境。
 
 3. 新建目录src，目录下创建index.js文件。
 4. package.json 下 scripts 中加人 build 命令，更方便的运行 webpack
@@ -27,9 +27,9 @@ npm install --save-dev webpack webpack-cli cross-env
 "scripts": {
   "build": "cross-env NODE_ENV=production webpack"
 },
-启动 webpack ,并通过 cross-env 设置当前 process.env.NODE_ENV 为 production ，方便启用相应优化
+启动 webpack ,并通过 cross-env 设置当前 process.env.NODE_ENV 为 production ，方便启用相应优化
 ```
-此时在次目录终端下
+此时在次目录终端下
 ```bash
 npm run build
 ```
@@ -39,7 +39,7 @@ npm run build
 要实现其他功能，需要在根目录下创建 webpack.config.js 文件进行配置。
 
 ### 1.entry 和 mode
-首先，我们需要配置入口 entry。因为 webpack 是从某一 js 文件开始，打包其中引入的其他文件。为了构建多页面应用程序，我们需要传入一个 js 入口文件组成的对象。为此，我按如下定义 src 目录:
+首先，我们需要配置入口 entry。因为 webpack 是从某一 js 文件开始，打包其中引入的其他文件。为了构建多页面应用程序，我们需要传入一个 js 入口文件组成的对象。为此，我按如下定义 src 目录:
 
 ```
 |-- src
@@ -75,7 +75,7 @@ const entries = ()=>{
 }
 
 module.exports = {
-  mode: devMode ? 'development' : 'production', // mode 是 4.x 新增的配置，可以选择 "development","production","none" 是三种值,可以区分开发环境和生产环境。
+  mode: devMode ? 'development' : 'production', // mode 是 4.x 新增的配置，可以选择 "development","production","none" 是三种值,可以区分开发环境和生产环境。
   entry: {
     ...entries(), // 解构对象
   },
@@ -83,13 +83,13 @@ module.exports = {
 ```
 
 ### 2.output
-有了入口，就要有出口。output配置了关于打包后的js输出。
+有了入口，就要有出口。output配置了关于打包后的js输出。
 ```js
 module.exports = {
   // ...
   output: {
     path: path.resolve(__dirname, 'dist'),  // 打包后目录
-    publicPath: '/',  // 静态文件目录
+    publicPath: '/',  // 静态文件目录
     filename: 'static/js/[name].[hash:7].min.js',  // 定义输出的目录和文件名
   },
 }
@@ -104,7 +104,7 @@ module.exports = {
 ```
 
 ### 3.使用 html-webpack-plugin 对 html 进行配置
-此时 webpack 只打包了js，为了对html进行分别配置，使用 html-webpack-plugin 。此外，还能对 html 进行压缩等优化。
+此时 webpack 只打包了js，为了对html进行分别配置，使用 html-webpack-plugin 。此外，还能对 html 进行压缩等优化。
 ```bash
 npm install --save-dev html-webpack-plugin
 ```
@@ -128,7 +128,7 @@ const htmlPluginArr = ()=>{
         removeComments: true,
         collapseWhitespace: true,
         removeAttributeQuotes: true
-        // 更多配置
+        // 更多配置
         // https://github.com/kangax/html-minifier#options-quick-reference
       },
       // necessary to consistently work with multiple chunks via CommonsChunkPlugin
@@ -153,7 +153,7 @@ module.exports = {
         |-- js
           |-- home.xxxxx.js  // home/index.js打包，并加入了hsah
           |-- user.xxxxx.js
-    |-- home.html // 通过 html-webpack-plugin 自动引入了 home 的 chunk
+    |-- home.html // 通过 html-webpack-plugin 自动引入了 home 的 chunk
     |-- user.html
 ```
 
@@ -195,7 +195,7 @@ plugins: [
   new webpack.HotModuleReplacementPlugin(),
 ],
 ```
-增加配置后，我们需要在 package.json 里增加 dev 命令
+增加配置后，我们需要在 package.json 里增加 dev 命令
 ```bash
 "scripts": {
   "dev": "cross-env NODE_ENV=development webpack-dev-server --progress",
@@ -203,12 +203,12 @@ plugins: [
 },
 ```
 其中 --progress 代表将运行进度输出到控制台。
-配置完成后，执行 npm run dev 命令，就会自动开启本地服务，并打开浏览器。此时，我们就可以进入我们的 html 页面，来实时查看更改。
+配置完成后，执行 npm run dev 命令，就会自动开启本地服务，并打开浏览器。此时，我们就可以进入我们的 html 页面，来实时查看更改。
 
 <!-- ### 5.optimization
 如果每个页面的入口都引入了同一 js 如 jq ，运行 build 命令，就会将 jq 分别打包进入入口文件，这样极大的增加了 js 的体积，这肯定不是我们所希望的。
 
-webpack 的一大功能就是优化代码，包括提取重复代码，压缩等。这也是 4.x 与之前版本配置差别较大的地方
+webpack 的一大功能就是优化代码，包括提取重复代码，压缩等。这也是 4.x 与之前版本配置差别较大的地方
 ```js
 optimization: {   //新版替换webpack.optimize.CommonsChunkPlugin，提取公共模块
   splitChunks: {
@@ -223,9 +223,9 @@ optimization: {   //新版替换webpack.optimize.CommonsChunkPlugin，提取公�
   minimize: true  //新版替换webpack.optimize.UglifyJsPlugin 压缩代码
 }
 ```
-这样再次 build，会将重复代码打包入 commons.js 文件中。同时，我们需要修改 html-webpack-plugin 的配置，在 chunk 中除了引入当前入口 js ，还要增加 commons
+这样再次 build，会将重复代码打包入 commons.js 文件中。同时，我们需要修改 html-webpack-plugin 的配置，在 chunk 中除了引入当前入口 js ，还要增加 commons
 
-再次 build，dist/js 中会增加 commons.js ,且文件夹的总体积明显减小。同时，打包出的html也需要引入了本身的入口和 commons。
+再次 build，dist/js 中会增加 commons.js ,且文件夹的总体积明显减小。同时，打包出的html也需要引入了本身的入口和 commons。
 
 ```js
 const htmlPluginArr = ()=>{
@@ -242,9 +242,9 @@ html 和 js 已经基本配置完成，现在需要对 css 进行配置。
 ```bash
  npm install --save-dev node-sass sass-loader css-loader style-loader postcss-loader autoprefixer postcss-import  postcss-url mini-css-extract-plugin
 ```
-注意: mini-css-extract-plugin 用于 css 文件的提取。在 4.x 之前的版本一般使用 extract-text-webpack-plugin ，在4.x后如果要继续使用需要安装最新板 extract-text-webpack-plugin@next
+注意: mini-css-extract-plugin 用于 css 文件的提取。在 4.x 之前的版本一般使用 extract-text-webpack-plugin ，在4.x后如果要继续使用需要安装最新板 extract-text-webpack-plugin@next
 
-其中每一个包的功能会在文章最后简单描述
+其中每一个包的功能会在文章最后简单描述
 ```js
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 // ...
@@ -272,14 +272,14 @@ module.exports = {
   },
 }
 ```
-这里有必要提一下 loader。rules 中 使用 use 数组来声明加载满足 test 正则的文件。其中 loader 是从右向左运行的，运行的结果会传给下一个 loader。
+这里有必要提一下 loader。rules 中 使用 use 数组来声明加载满足 test 正则的文件。其中 loader 是从右向左运行的，运行的结果会传给下一个 loader。
 
-所以上面配置的意思就是读取 .sass/scss/css 文件，顺序是 sass-loader -> postcss-loader -> css-loader。
+所以上面配置的意思就是读取 .sass/scss/css 文件，顺序是 sass-loader -> postcss-loader -> css-loader。
 
-由于 mini-css-extract-plugin 提取 css 文件只能用于生产环境，所以最后依据当前环境来判断是使用 style-loader 还是 MiniCssExtractPlugin.loader.
+由于 mini-css-extract-plugin 提取 css 文件只能用于生产环境，所以最后依据当前环境来判断是使用 style-loader 还是 MiniCssExtractPlugin.loader.
 
 由于使用了 postcss ，我们必须要对其进行配置，来满足 css 的浏览器兼容性。
-postcss 也是可以通过配置文件的形式进行配置的。
+postcss 也是可以通过配置文件的形式进行配置的。
 
 在根目录新建 .postcssrc.js 文件
 ```js
@@ -296,7 +296,7 @@ module.exports = {
 ```
 具体配置可以查看 postcss 的文档。
 
-在每个入口 js 文件中引入同一目录下的 scss 文件，再次build
+在每个入口 js 文件中引入同一目录下的 scss 文件，再次build
 ```
 |-- dist
     |-- static
@@ -309,11 +309,11 @@ module.exports = {
     |-- home.html
     |-- user.html
 ```
-### 5.其他loader
-webpack 本身只能打包 js 文件。所以，如上面的 css/scss 文件等其他文件，就需要对应的 loader 去加载使其资源转化。除了 css 文件，我们还需要对字体文件，图片等资源进行加载。并且，为了代码的质量，我们需要使用 eslint 对代码进行规范;为了使用 es6 开发，需要 babel 对代码进行兼容处理。这两个需求都需要用 loader 加载并处理 js 文件。
+### 5.其他loader
+webpack 本身只能打包 js 文件。所以，如上面的 css/scss 文件等其他文件，就需要对应的 loader 去加载使其资源转化。除了 css 文件，我们还需要对字体文件，图片等资源进行加载。并且，为了代码的质量，我们需要使用 eslint 对代码进行规范;为了使用 es6 开发，需要 babel 对代码进行兼容处理。这两个需求都需要用 loader 加载并处理 js 文件。
 
 #### babel
-关于[babel配置](https://babel.docschina.org/setup#installation)，官网非常的详细。
+关于[babel配置](https://babel.docschina.org/setup#installation)，官网非常的详细。
 
 在 7.x 版本中所有 stage-x presets 已弃用，所有就不在使用次类规范了。
 ```bash
@@ -333,7 +333,7 @@ module: {
   ]
 }
 ```
-关于配置的详细描述的一篇文章 [《你真的会用 Babel 吗?》](https://segmentfault.com/a/1190000011155061)
+关于配置的详细描述的一篇文章 [《你真的会用 Babel 吗?》](https://segmentfault.com/a/1190000011155061)
 ```js
 {
   "presets": [
@@ -371,7 +371,7 @@ module: {
         exclude: /node_modules/,  // 第三方库中的代码不进行规范检测
         loader: 'eslint-loader',
         options: {
-          formatter: require('eslint-friendly-formatter'),  // 在终端上显示错误
+          formatter: require('eslint-friendly-formatter'),  // 在终端上显示错误
         }
       },
     ]
@@ -393,22 +393,22 @@ module: {
 module.exports = {
 	root: true,
   parserOptions: {
-    parser: 'babel-eslint'  // babel 处理后的代码的eslint处理
+    parser: 'babel-eslint'  // babel 处理后的代码的eslint处理
   },
   env: {
     browser: true,
   },
 	extends: 'airbnb-base',   // 所用的规范
-	globals: {    // 可以使用的为在当前 js 内声明的变量
+	globals: {    // 可以使用的为在当前 js 内声明的变量
 		document: true,
 		navigator: true,
 		window:true,
 		node:true
 	},
-	plugins: [  // 对 html 文件的规则处理
+	plugins: [  // 对 html 文件的规则处理
 		'html'
 	],
-	rules: {    // 除了规预设范外的自定义规则
+	rules: {    // 除了规预设范外的自定义规则
 		'import/extensions': ['error', 'always', {
 				js: 'never',
 		}],
@@ -485,7 +485,7 @@ modules: {
 运行 build ，小图片字体会直接转成 bsae64 ，其他的则分别进入 dist/static 下的 images 或 fonts 下
 
 ### 6. resolve
-有时引入其他路径下的文件时，相对路径比较复杂。resolve 配置直接解决了这点，让我们更方便的引入。
+有时引入其他路径下的文件时，相对路径比较复杂。resolve 配置直接解决了这点，让我们更方便的引入。
 ```js
 module.exports = {
   //...
@@ -497,7 +497,7 @@ module.exports = {
   },
 }
 ```
-如果使用了 eslint ，此配置会和 eslint 相冲突。为了解决这个问题，我们需要安装 eslint 的一个插件
+如果使用了 eslint ，此配置会和 eslint 相冲突。为了解决这个问题，我们需要安装 eslint 的一个插件
 ```bash
 npm install --save-dev eslint-import-resolver-webpack
 ```
@@ -518,7 +518,7 @@ module.exports = {
 	}
 };
 ```
-这样，我们在引入 src 下的文件时，就可以使用 @ 代替一部分相对路径
+这样，我们在引入 src 下的文件时，就可以使用 @ 代替一部分相对路径
 ```js
 // old
 import '../../public/aaa.js'
@@ -526,7 +526,7 @@ import '../../public/aaa.js'
 import '@/public/aaa'
 ```
 ### 7.常用插件
-很多时候我们需要一个静态目录，目录中的内容不经过 webpack 处理。使用 copy-webpack-plugin 将静态文件中的内容完全复制到我们的 dist 下。
+很多时候我们需要一个静态目录，目录中的内容不经过 webpack 处理。使用 copy-webpack-plugin 将静态文件中的内容完全复制到我们的 dist 下。
 ```bash
 npm install --save-dev copy-webpack-plugin
 ```
@@ -541,7 +541,7 @@ plugins: [
       ignore: ['.*']
     }
   ]),
-  new webpack.DefinePlugin({ // 在js中可直接使用的全局变量
+  new webpack.DefinePlugin({ // 在js中可直接使用的全局变量
     'process.env.NODE_ENV': devMode ? 'development' : 'production',
   }),
 ]
@@ -647,7 +647,7 @@ babel polify
     </tr>
     <tr>
       <td>postcss-url</td>
-      <td>把css中路径改为打包后路径</td>
+      <td>把css中路径改为打包后路径</td>
     </tr>
     <tr>
       <td>mini-css-extract-plugin</td>
@@ -689,7 +689,7 @@ babel polify
     </tr>
     <tr>
       <td>eslint-import-resolver-webpack</td>
-      <td>解决和webpack中resolve的冲突</td>
+      <td>解决和webpack中resolve的冲突</td>
     </tr>
   </tbody>
 </table>
@@ -711,7 +711,7 @@ babel polify
     </tr>
     <tr>
       <td>@babel/polyfill</td>
-      <td>垫片，用于js兼容性</td>
+      <td>垫片，用于js兼容性</td>
     </tr>
   </tbody>
 </table>
