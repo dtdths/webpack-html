@@ -7,13 +7,13 @@ module.exports = {
     browser: true,
   },
 	extends: 'airbnb-base',   // 所用的规范
-	globals: {    // 可以使用的为在当前 js 内声明的变量
+	globals: {    // 可以使用的为在当前 js 内声明的变量
 		document: true,
 		navigator: true,
 		window:true,
 		node:true
 	},
-	plugins: [  // 对 html 文件的规则处理
+	plugins: [  // 对 html 文件的规则处理
 		'html'
 	],
 	settings: {
@@ -21,7 +21,7 @@ module.exports = {
       webpack: { config: 'webpack.config.js' }
 		}
   },
-	rules: {    // 除了规预设范外的自定义规则
+	rules: {    // 除了规预设范外的自定义规则
 		'import/extensions': ['error', 'always', {
 				js: 'never',
 		}],

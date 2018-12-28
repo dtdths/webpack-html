@@ -107,7 +107,7 @@ module.exports = {
         ignore: ['.*']
       }
     ]),
-    new webpack.DefinePlugin({ //在js中可直接使用的全局变量
+    new Webpack.DefinePlugin({ //在js中可直接使用的全局变量
       'process.env.NODE_ENV': devMode ? 'development' : 'production',
     }),
   ],
