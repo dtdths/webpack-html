@@ -706,6 +706,15 @@ const htmlPluginArr = ()=>{
   },
 ```
 
+别忘了修改 .eslintrc.js 中配置文件的地址
+
+```js
+settings: {
+  'import/resolver': {
+    webpack: { config: 'build/webpack.base.conf.js' }
+  }
+},
+```
 
 
 

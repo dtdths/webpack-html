@@ -18,7 +18,7 @@ module.exports = {
 	],
 	settings: {
     'import/resolver': {
-      webpack: { config: 'webpack.config.js' }
+      webpack: { config: 'build/webpack.base.conf.js' }
 		}
   },
 	rules: {    // 除了规预设范外的自定义规则
