@@ -205,37 +205,6 @@ plugins: [
 其中 --progress 代表将运行进度输出到控制台。
 配置完成后，执行 npm run dev 命令，就会自动开启本地服务，并打开浏览器。此时，我们就可以进入我们的 html 页面，来实时查看更改。
 
-<!-- ### 5.optimization
-如果每个页面的入口都引入了同一 js 如 jq ，运行 build 命令，就会将 jq 分别打包进入入口文件，这样极大的增加了 js 的体积，这肯定不是我们所希望的。
-
-webpack 的一大功能就是优化代码，包括提取重复代码，压缩等。这也是 4.x 与之前版本配置差别较大的地方
-```js
-optimization: {   //新版替换webpack.optimize.CommonsChunkPlugin，提取公共模块
-  splitChunks: {
-    cacheGroups: {
-      commons: {
-        name: 'commons', // 重复代码打包到vender，和库放在一起
-        chunks: 'all',
-        minChunks: 2
-      }
-    }
-  },
-  minimize: true  //新版替换webpack.optimize.UglifyJsPlugin 压缩代码
-}
-```
-这样再次 build，会将重复代码打包入 commons.js 文件中。同时，我们需要修改 html-webpack-plugin 的配置，在 chunk 中除了引入当前入口 js ，还要增加 commons
-
-再次 build，dist/js 中会增加 commons.js ,且文件夹的总体积明显减小。同时，打包出的html也需要引入了本身的入口和 commons。
-
-```js
-const htmlPluginArr = ()=>{
-  //...
-  const baseOption = {
-    //...
-    chunks: [filename,'commons'],
-  }
-}
-``` -->
 ### 5.css相关
 html 和 js 已经基本配置完成，现在需要对 css 进行配置。
 这一部分按照的包会比较多，但是配置都较为简单。
