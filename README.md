@@ -549,22 +549,156 @@ plugins: [
 配置基本完成，build 和 dev 基本功能有了。
 
 ##  四.optimization (优化)
-webpack 最重要的功能就是对代码就行优化。4.x 版本新增加了 optimization 配置，
+webpack 最重要的功能就是对代码就行优化。4.x 版本新增加了 optimization 配置，以前很多需要插件完成的事现在 webpack 独立就能完成。
+
+### 1.css 优化
+每个入口都引入了当前页面的 css 和公用 css (入 reset.css)。如果按照当前配置 build ，会出现多个 css 文件，并且每个 css 中都包含了 reset.css。
+
+所以，我们需要 1.css 文件合并；2.提取公共 css。
+
+需要使用 optimize-css-assets-webpack-plugin 和 cssnano，来完成 压缩，合并，去重。
+```bash
+npm install --save-dev optimize-css-assets-webpack-plugin cssnano
+```
+首选，我们通过 optimization 的 splitChunks 提取公共模块。然后使用 optimize-css-assets-webpack-plugin 和 cssnano 对 css 进行优化。
+```js
+module.exports = {
+  plugins: [
+    new OptimizeCSSAssetsPlugin({
+      // 参考 https://my.oschina.net/itlangz/blog/2986976
+      assetNameRegExp: /\.css$/g,
+      cssProcessor: require('cssnano'),
+      cssProcessorPluginOptions: {
+        preset: ['default', {
+          discardComments: {
+            removeAll: true,
+          },
+          normalizeUnicode: false
+        }]
+      },
+      canPrint: true
+    }),
+  ]
+  // ...
+  optimization: {
+    splitChunks: {  //新版替换webpack.optimize.CommonsChunkPlugin，提取公共模块
+      cacheGroups: {
+        styles: {            
+          name: 'styles',
+          test: /\.scss|css$/,
+          chunks: 'all',    // merge all the css chunk to one file
+          enforce: true
+        }
+      }
+    },
+  },
+}
+```
+最后，我们需要在 html-webpack-plugin 配置的需要引入的 chunk 数组中增加我们生成的 styles 的 chunk,这样打包后的 html 文件才会正常引入 styles。
+```js
+const htmlPluginArr = ()=>{
+  const baseOption = {
+    filename: `${filename}.html`, //目标文件
+    template: filePath,
+    chunks: [filename,'styles'],
+  }
+}
+```
+再次 build ，会将 css 打包成单个 styles.xxxx.css 文件。
+
+### 2. js优化
+js 代码出去每个入口独有的业务代码之外，还可以大致分为三部分：
+1. manifest
+
+* >webpack 的 runtime
+
+```js
+optimization: {
+  runtimeChunk: {
+    name: "manifest"
+  },
+},
+```
+将每个打包出来的js文件中的 webpack 相关代码提取成 mainfest 。
+
+2. commons
+
+* >公共代码
+
+```js
+optimization: {
+  runtimeChunk: {
+    name: "manifest"
+  },
+  splitChunks: {
+    cacheGroups: {
+      commons: {
+        name: 'commons', // 重复代码打包到commons，和库放在一起
+        chunks: 'initial',
+        minChunks: 2,
+        enforce:true
+      },
+      styles: {            
+        name: 'styles',
+        test: /\.scss|css$/,
+        chunks: 'all',
+        enforce: true
+      }
+    }
+  },
+},
+```
+将重复代码打包为 commons 。
+
+3. vendor
+
+* >node_modules 包
+```js
+optimization: {
+  runtimeChunk: {
+    name: "manifest"
+  },
+  splitChunks: {
+    // ...
+    vendors: {
+      name: 'vendors',
+      test: chunk => (
+        chunk.resource &&
+        /\.js$/.test(chunk.resource) &&
+        /node_modules/.test(chunk.resource)
+      ),
+      chunks: 'initial',
+    },
+  },
+},
+```
+## 五.分离开发配置与生产配置.
+新建配置目录，将配置文件进行细分，删掉根目录下的 webpack.config.js
+```
+|-- rootDir
+    |-- build
+        |-- build.js  // 打包时删除 dist 目录
+        |-- webpack.base.conf.js  // 公共配置
+        |-- webpack.dev.conf.js   // 开发配置
+        |-- webpack.prod.conf.js  // 生产配置
+    |-- src
+```
+提取公共配置到 base 配置中，使用 webpack-merge 进行合并。
+
+并在 build 开始前使用 rimraf 清空旧 dist 目录。
+
+同时修改 npm 命令
+```json
+ "scripts": {
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --progress  --config build/webpack.dev.conf.js",
+    "build": "cross-env NODE_ENV=production node build/build.js"
+  },
+```
 
 
 
 
-* > # runtimeChunk 和 其他 优化 单拿出来
-
-optimize-css-assets-webpack-plugin
-
-cssnano
-babel polify
-
-
-
-
-##  五.常用npm包和其作用
+##  六.常用npm包和其作用
 
 <table>
   <caption>webpack基本</caption>
@@ -580,6 +714,10 @@ babel polify
     <tr>
       <td>webpack-dev-server</td>
       <td>用于开启本地服务，代理，热更新</td>
+    </tr>
+    <tr>
+      <td>webpack-dev-server</td>
+      <td>用于合并 webpack 配置</td>
     </tr>
   </tbody>
 </table>
@@ -610,6 +748,10 @@ babel polify
     <tr>
       <td>html-loader</td>
       <td>html片段复用</td>
+    </tr>
+    <tr>
+      <td>rimraf</td>
+      <td>删除文件</td>
     </tr>
   </tbody>
 </table>
@@ -652,6 +794,14 @@ babel polify
     <tr>
       <td>mini-css-extract-plugin</td>
       <td>把css提取成.css文件</td>
+    </tr>
+    <tr>
+      <td>optimize-css-assets-webpack-plugin</td>
+      <td>用于优化或者压缩CSS资源</td>
+    </tr>
+    <tr>
+      <td>cssnano</td>
+      <td>含优化css规则的包</td>
     </tr>
   </tbody>
 </table>

@@ -1,8 +1,8 @@
 import $ from 'jquery';
 import '@babel/polyfill';
-import '@/public/aaa';
+import b from '@/public/aaa';
 import '@/public/ccc';
 import './index.scss';
 
-console.log(2);
+console.log(b);
 console.log($);

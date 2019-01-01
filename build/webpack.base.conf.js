@@ -1,14 +1,13 @@
+'use strict'
 const path = require("path");
 const glob = require("glob");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const Webpack = require('webpack');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
-const devMode = process.env.NODE_ENV !== 'production';
+const resolve = (dir) => path.join(__dirname, '..', dir);
 
-const pagesDir = path.resolve(__dirname, 'src/pages');
+const pagesDir = resolve('src/pages');
+
 
 const entries = ()=>{
   const entryFiles = glob.sync(pagesDir + '/**/*.{js,ts}');
@@ -43,73 +42,24 @@ const htmlPluginArr = ()=>{
 }
 
 module.exports = {
-  mode: devMode ? 'development' : 'production',
   entry: {
     ...entries(),
     // vendor: Object.keys(packagejson.dependencies),  //公共模块单独打包 ['jquery']
   },
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: resolve('dist'),
     publicPath: '/',
     filename: 'static/js/[name].[hash:7].min.js',
   },
-  devServer: {
-    inline: true, // 使用内联模式
-    clientLogLevel: 'warning', //控制台消息提示
-    open: true, //自动打开浏览器
-    contentBase: './dist', // 服务器静态文件目录
-    compress: true, //gzip 压缩
-    disableHostCheck: true,
-    host: "0.0.0.0",
-    port: 1080,
-    useLocalIp: true, //用自己的ip
-    hot: true, //启动热更新
-    overlay: { //出现错误时在浏览器中显示
-      warnings: false,
-      errors: true
-    },
-    // proxy: {
-    //   // https://github.com/chimurai/http-proxy-middleware
-    //   "/api": {
-    //     target: "http://localhost:3000",
-    //     // pathRewrite: {"^/api" : ""},  //改写请求地址,/api/xxx直接写成/xxx
-    //     // secure: false,  // 支持https
-    //   }
-    // }
-  },
   plugins: [
-    new Webpack.HotModuleReplacementPlugin(),
     ...htmlPluginArr(),
-    new MiniCssExtractPlugin({
-      // Options similar to the same options in webpackOptions.output
-      // both options are optional
-      filename: `static/style/${devMode ? '[name].css' : '[name].[hash].css'}`,
-      chunkFilename: `static/style/${devMode ? '[name].css' : '[name].[hash].css'}`,
-    }),
-    new OptimizeCSSAssetsPlugin({
-      // https://my.oschina.net/itlangz/blog/2986976
-      assetNameRegExp: /\.css$/g,
-      cssProcessor: require('cssnano'),
-      cssProcessorPluginOptions: {
-        preset: ['default', {
-          discardComments: {
-            removeAll: true,
-          },
-          normalizeUnicode: false
-        }]
-      },
-      canPrint: true
-    }),
     new CopyWebpackPlugin([
       {
-        from: path.resolve(__dirname, './static'),
+        from: resolve('./static'),
         to: 'static',
         ignore: ['.*']
       }
     ]),
-    new Webpack.DefinePlugin({ //在js中可直接使用的全局变量
-      'process.env.NODE_ENV': devMode ? 'development' : 'production',
-    }),
   ],
   module: {
     rules: [
@@ -174,58 +124,12 @@ module.exports = {
           }
         ]
       },
-      {
-        test: /\.(sa|sc|c)ss$/,
-        use: [
-          devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
-          'css-loader',
-          'postcss-loader',
-          'sass-loader',
-        ],  // loader是从右向左运行的，运行的结果会传给下一个loader
-      }
     ]
   },
   resolve: {
     extensions: ['.js', '.json'],
     alias: {
-      '@': path.resolve(__dirname, './src')
+      '@': resolve('./src')
     }
-  },
-  optimization: {
-    runtimeChunk: {
-      name: "manifest"
-    },
-    splitChunks: {  //新版替换webpack.optimize.CommonsChunkPlugin，提取公共模块
-      cacheGroups: {
-        commons: {
-          name: "commons",
-          chunks: "initial",
-          minChunks: 2,
-        },
-        styles: {
-          name: 'styles',
-          test: module => module.nameForCondition &&
-            /\.(css|s[ac]ss)$/.test(module.nameForCondition()) &&
-            !/^javascript/.test(module.type),
-          chunks: 'all',
-          enforce: true,
-        },
-        vendors: {
-          name: 'vendors',
-          test: chunk => (
-            chunk.resource &&
-            /\.js$/.test(chunk.resource) &&
-            /node_modules/.test(chunk.resource)
-          ),
-          chunks: 'initial',
-        },
-        // vendors: {
-        //   name: "vendors",
-        //   test: /[\\/]node_modules[\\/]/,
-        //   // priority: -10
-        // },
-      }
-    },
-    // minimize: true  //新版替换webpack.optimize.UglifyJsPlugin 压缩代码
   },
 }
