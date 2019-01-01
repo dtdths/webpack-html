@@ -660,8 +660,8 @@ optimization: {
   },
   splitChunks: {
     // ...
-    vendors: {
-      name: 'vendors',
+    vendor: {
+      name: 'vendor',
       test: chunk => (
         chunk.resource &&
         /\.js$/.test(chunk.resource) &&
@@ -672,6 +672,17 @@ optimization: {
   },
 },
 ```
+同样，在 html-webpack-plugin 中引入chunk
+```js
+const htmlPluginArr = ()=>{
+  const baseOption = {
+    filename: `${filename}.html`,
+    template: filePath,
+    chunks: [filename, 'vendor', 'commons', 'manifest','styles'],
+  }
+}
+```
+
 ## 五.分离开发配置与生产配置.
 新建配置目录，将配置文件进行细分，删掉根目录下的 webpack.config.js
 ```

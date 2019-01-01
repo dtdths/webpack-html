@@ -24,7 +24,7 @@ const htmlPluginArr = ()=>{
     const baseOption = {
       filename: `${filename}.html`, //目标文件
       template: filePath,
-      chunks: [filename, 'vendor', 'commons', 'manifest','styles'], // chunks: ['a', 'vendor', 'common'],
+      chunks: [filename, 'vendor', 'commons', 'manifest','styles'],
       inject: true,  // script 插入body底部
       minify: { //压缩
         removeComments: true,

@@ -69,8 +69,8 @@ const proConfig = merge(baseWebpackConfig, {
           chunks: 'all',
           enforce: true,
         },
-        vendors: {
-          name: 'vendors',
+        vendor: {
+          name: 'vendor',
           test: chunk => (
             chunk.resource &&
             /\.js$/.test(chunk.resource) &&
