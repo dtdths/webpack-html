@@ -48,39 +48,39 @@ const proConfig = merge(baseWebpackConfig, {
       'process.env': env,
     }),
   ],
-  // optimization: {
-  //   runtimeChunk: {
-  //     name: "manifest"
-  //   },
-  //   splitChunks: {  //新版替换webpack.optimize.CommonsChunkPlugin，提取公共模块
-  //     cacheGroups: {
-  //       commons: {
-  //         name: "commons",
-  //         chunks: "initial",
-  //         minChunks: 2, // 公共代码的判断标准：某个js模块被多少个chunk加载了才算是公共代码
-  //         enforce: true
-  //       },
-  //       styles: {
-  //         name: 'styles',
-  //         test: module => module.nameForCondition &&
-  //           /\.(css|s[ac]ss)$/.test(module.nameForCondition()) &&
-  //           !/^javascript/.test(module.type),
-  //         chunks: 'all',
-  //         enforce: true,
-  //       },
-  //       vendor: {
-  //         name: 'vendor',
-  //         test: chunk => (
-  //           chunk.resource &&
-  //           /\.js$/.test(chunk.resource) &&
-  //           /node_modules/.test(chunk.resource)
-  //         ),
-  //         chunks: 'initial',
-  //       },
-  //     }
-  //   },
-  //   // minimize: true  //新版替换webpack.optimize.UglifyJsPlugin 压缩代码,production 默认开启
-  // },
+  optimization: {
+    runtimeChunk: {
+      name: "manifest"
+    },
+    splitChunks: {  //新版替换webpack.optimize.CommonsChunkPlugin，提取公共模块
+      cacheGroups: {
+        commons: {
+          name: "commons",
+          chunks: "initial",
+          minChunks: 2, // 公共代码的判断标准：某个js模块被多少个chunk加载了才算是公共代码
+          enforce: true
+        },
+        styles: {
+          name: 'styles',
+          test: module => module.nameForCondition &&
+            /\.(css|s[ac]ss)$/.test(module.nameForCondition()) &&
+            !/^javascript/.test(module.type),
+          chunks: 'all',
+          enforce: true,
+        },
+        vendor: {
+          name: 'vendor',
+          test: chunk => (
+            chunk.resource &&
+            /\.js$/.test(chunk.resource) &&
+            /node_modules/.test(chunk.resource)
+          ),
+          chunks: 'initial',
+        },
+      }
+    },
+    // minimize: true  //新版替换webpack.optimize.UglifyJsPlugin 压缩代码,production 默认开启
+  },
 });
 // return;
 module.exports = proConfig;

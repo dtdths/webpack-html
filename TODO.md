@@ -25,3 +25,5 @@ image-webpack-loader
 babel
 
 autoprefixer : Change `browserslist` option to `overrideBrowserslist
+
+optimize-css-assets-webpack-plugi   将废弃
